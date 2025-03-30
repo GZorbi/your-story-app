@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Your Story App",
-    "slug": "your-story-app",
+    "name": "Your Story",
+    "slug": "your-story", // 👈 αυτό να ταιριάζει με το Project ID
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,7 +23,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "cc9d25dd-5541-44b1-9351-2bf6d32bc49a"
+        "projectId": "your-story"
       }
     },
     "owner": "gzorbi",

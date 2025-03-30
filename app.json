@@ -27,9 +27,6 @@
       }
     },
     "owner": "gzorbi",
-    "cli": {
-      "appVersionSource": "remote"
-    },
     "sdkVersion": "50.0.0",
     "platforms": ["ios", "android"]
   }

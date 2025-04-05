@@ -1,284 +1,277 @@
+// ΠΛΗΡΗΣ ΚΩΔΙΚΑΣ ΕΦΑΡΜΟΓΗΣ "YOUR STORY" ΜΕ ΠΟΛΛΑΠΛΕΣ ΓΛΩΣΣΕΣ ΚΑΙ ΔΥΝΑΜΙΚΑ BACKGROUNDS
+
 import React, { useState } from 'react';
-import * as Sharing from 'expo-sharing';
+import { View, Text, Image, TouchableOpacity, ScrollView, TextInput, Share, Alert, ImageBackground, StyleSheet, I18nManager } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import { Text, View, TextInput, Pressable, ScrollView, StyleSheet, Platform, Image } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import * as Sharing from 'expo-sharing';
 
-const beginningsEN = [
-  "As she walked into the café, the familiar scent of coffee mingled with something unexpected—his cologne...",
-  "The day the stars vanished was the day humanity learned to look inward...",
-  "The old house on the corner had been empty for decades, but every night, laughter echoed...",
-  "Detective Elena Rivers knew she’d stumbled upon something unusual when the victim’s watch was still ticking...",
-  "In a realm where seasons fought for dominance, Lira could summon the whispers of spring.",
-  "As the clock struck midnight, Jake received a message: 'I’m closer than you think.'"
-];
+const categoryPrompts = {
+  English: {
+    Comedy: [
+      "The wizard pulled a croissant from his robe and muttered, 'This will hurt.'",
+      "The dragon didn’t breathe fire—just a burnt CD of ‘90s love songs.",
+      "The king raised his sword and shouted, 'Who left their Tupperware in the throne room?!'",
+      "In the middle of the galactic war, the captain paused to fix his hair.",
+      "At the edge of the map, all they found was a pizza place with free Wi-Fi."
+    ],
+    Horror: [
+      "The door slammed shut behind him, and a voice whispered: 'You’re finally home, Mother…'",
+      "The phone rang again—even though the line had been dead for 12 years.",
+      "His reflection smiled back at him. Only the reflection did.",
+      "The attic wall began dripping red paint… or so they thought—until it spelled a name.",
+      "The doll had moved again. This time, it held the key to the locked room."
+    ],
+    Romance: [
+      "She loved him like a dying star loves its final light—fiercely and with no hope of return.",
+      "He smelled of old books, dried roses, and a summer she never got over.",
+      "They met on a rainy Thursday, and by Friday, she had planned the wedding—or the escape.",
+      "Her heart didn’t break—it folded like the letters she never sent.",
+      "He promised to wait forever. She believed him—until forever knocked and asked for directions."
+    ],
+    Fantasy: [
+      "The sky turned violet as the ancient bells rang—for the first time in a thousand years.",
+      "She was born during the eclipse, her breath laced with frost and a name no one dared speak.",
+      "At the edge of the forgotten kingdom, a boy found a crown—and it whispered.",
+      "He carried the last ember of a fallen world in a jar, guarded by silence and salt.",
+      "The forest bowed as she passed—not out of respect, but because it remembered her mother."
+    ],
+    Mystery: [
+      "The letter had no return address—just a single black feather inside.",
+      "When she opened the music box, it played backwards, and the lights flickered.",
+      "The detective paused. The victim was missing—but the crime scene still bled.",
+      "Three keys, two clocks, and one name carved into the floorboards: hers.",
+      "No one remembered building the lighthouse. Yet its light had never gone out."
+    ]
+  },
+  Greek: {
+    Comedy: [
+      "Ο μάγος έβγαλε ένα κρουασάν από τον μανδύα του και ψιθύρισε: 'Αυτό θα πονέσει.'",
+      "Ο δράκος δεν έβγαζε φωτιά—μόνο ένα καμμένο CD με ερωτικά τραγούδια των '90s.",
+      "Ο βασιλιάς σήκωσε το σπαθί του και φώναξε: 'Ποιος άφησε το τάπερ του στο θρόνο;'",
+      "Μέσα στον γαλαξιακό πόλεμο, ο καπετάνιος σταμάτησε για να φτιάξει τα μαλλιά του.",
+      "Στο τέλος του χάρτη, βρήκαν μόνο μια πιτσαρία με δωρεάν Wi-Fi."
+    ],
+    Horror: [
+      "Η πόρτα έκλεισε απότομα πίσω του, και μια φωνή ψιθύρισε: 'Καλώς ήρθες σπίτι, Μαμά…'",
+      "Το τηλέφωνο ξαναχτύπησε—παρόλο που η γραμμή ήταν νεκρή εδώ και 12 χρόνια.",
+      "Η αντανάκλασή του χαμογέλασε πίσω του. Μόνο η αντανάκλαση όμως.",
+      "Ο τοίχος της σοφίτας άρχισε να στάζει κόκκινη μπογιά… μέχρι που σχημάτισε ένα όνομα.",
+      "Η κούκλα είχε μετακινηθεί ξανά. Αυτή τη φορά κρατούσε το κλειδί του κλειδωμένου δωματίου."
+    ],
+    Romance: [
+      "Τον αγάπησε όπως ένα άστρο λίγο πριν σβήσει—παθιασμένα και χωρίς ελπίδα επιστροφής.",
+      "Μύριζε παλιά βιβλία, αποξηραμένα τριαντάφυλλα και ένα καλοκαίρι που δεν ξεπέρασε ποτέ.",
+      "Γνωρίστηκαν μια βροχερή Πέμπτη, και μέχρι την Παρασκευή, είχε ήδη σχεδιάσει τον γάμο—ή την απόδραση.",
+      "Η καρδιά της δεν ράγισε—δίπλωσε σαν τα γράμματα που ποτέ δεν έστειλε.",
+      "Υποσχέθηκε να την περιμένει για πάντα. Τον πίστεψε—μέχρι που το 'πάντα' χτύπησε την πόρτα και ζήτησε οδηγίες."
+    ],
+    Fantasy: [
+      "Ο ουρανός βάφτηκε μοβ καθώς οι αρχαίες καμπάνες ήχησαν—για πρώτη φορά μετά από χίλια χρόνια.",
+      "Γεννήθηκε κατά τη διάρκεια της έκλειψης, με ανάσα παγωμένη και όνομα που κανείς δεν τολμούσε να προφέρει.",
+      "Στο όριο του ξεχασμένου βασιλείου, ένα αγόρι βρήκε ένα στέμμα—και αυτό του ψιθύρισε.",
+      "Μετέφερε τη τελευταία σπίθα ενός χαμένου κόσμου σε ένα βάζο, φυλαγμένο με σιωπή και αλάτι.",
+      "Το δάσος υποκλίθηκε καθώς περνούσε—όχι από σεβασμό, αλλά επειδή θυμόταν τη μητέρα της."
+    ],
+    Mystery: [
+      "Το γράμμα δεν είχε αποστολέα—μόνο ένα μαύρο φτερό μέσα.",
+      "Όταν άνοιξε το μουσικό κουτί, έπαιζε ανάποδα και τα φώτα τρεμόπαιξαν.",
+      "Ο ντετέκτιβ σταμάτησε. Το θύμα είχε εξαφανιστεί—αλλά η σκηνή του εγκλήματος αιμορραγούσε ακόμα.",
+      "Τρία κλειδιά, δύο ρολόγια και ένα όνομα χαραγμένο στο πάτωμα: το δικό της.",
+      "Κανείς δεν θυμόταν πότε χτίστηκε ο φάρος. Κι όμως, το φως του δεν είχε σβήσει ποτέ."
+    ]
+  }
+};
+// ΠΛΗΡΗΣ ΚΩΔΙΚΑΣ ΕΦΑΡΜΟΓΗΣ "YOUR STORY"
+// Περιλαμβάνει: UI, εναλλαγή γλώσσας, οδηγίες, θεματικές κατηγορίες, backgrounds, επανεκκίνηση, αρχικές προτάσεις (EN/GR)
 
-const beginningsGR = [
-  "Καθώς μπήκε στο καφέ, η γνώριμη μυρωδιά αναμείχθηκε με κάτι απροσδόκητο — το άρωμά του...",
-  "Την ημέρα που εξαφανίστηκαν τα άστρα, όλοι έστρεψαν το βλέμμα μέσα τους.",
-  "Το παλιό σπίτι είχε χρόνια να κατοικηθεί, μα κάθε βράδυ ακουγόταν γέλιο...",
-  "Η ντετέκτιβ Ρίβερς ήξερε πως κάτι δεν πήγαινε καλά όταν είδε το ρολόι να δουλεύει...",
-  "Σε κόσμο όπου οι εποχές πολεμούσαν, η Λύρα καλούσε την άνοιξη με ψιθύρους.",
-  "Μεσάνυχτα. Ένα μήνυμα εμφανίστηκε: 'Είμαι πιο κοντά απ’ όσο νομίζεις.'"
-];
+
+
+const backgrounds = {
+  Comedy: require('./assets/default.jpg'),
+  Horror: require('./assets/horror.jpg'),
+  Romance: require('./assets/romance.jpg'),
+  Fantasy: require('./assets/fantasy.jpg'),
+  Mystery: require('./assets/mystery.jpg')
+};
+
+const prompts = categoryPrompts;
+
 
 export default function App() {
   const [language, setLanguage] = useState('English');
-  const [turns, setTurns] = useState(0);
+  const [category, setCategory] = useState('Comedy');
+  const [rounds, setRounds] = useState(5);
   const [players, setPlayers] = useState(2);
-  const [showInstructions, setShowInstructions] = useState(false);
-  const [started, setStarted] = useState(false);
-  const [currentTurn, setCurrentTurn] = useState(0);
-  const [fullStory, setFullStory] = useState('');
+  const [currentRound, setCurrentRound] = useState(1);
+  const [currentPlayer, setCurrentPlayer] = useState(1);
+  const [story, setStory] = useState('');
   const [input, setInput] = useState('');
-  const [lastWords, setLastWords] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [startPrompt, setStartPrompt] = useState('');
 
-  const t = {
-    welcome: language === 'Greek' ? "Καλώς ήρθατε στο 'Η Ιστορία Σου'!" : "Welcome to 'Your Story'!",
-    selectLanguage: language === 'Greek' ? "Επιλέξτε γλώσσα" : "Select Language",
-    selectTurns: language === 'Greek' ? "Επιλέξτε αριθμό γύρων" : "Select number of turns",
-    selectPlayers: language === 'Greek' ? "Επιλέξτε αριθμό παικτών" : "Select number of players",
-    instructionsBtn: language === 'Greek' ? "Πώς παίζεται" : "How to Play",
-    instructions: language === 'Greek'
-      ? "Ένα παιχνίδι παρέας όπου κάθε παίκτης προσθέτει ένα κομμάτι στην ιστορία. Ο σκοπός είναι να φτιάξετε μια τρελή, αστεία και απρόβλεπτη ιστορία που θα σας κάνει να γελάσετε όλοι μαζί στο τέλος! Κάθε παίκτης βλέπει μόνο τις τελευταίες τρεις λέξεις πριν συνεχίσει."
-      : "This is a party game where each player adds a piece to a shared story. The goal is to create a crazy, funny and unpredictable narrative that everyone will laugh about in the end! Each player sees only the last three words before continuing.",
-    startGame: language === 'Greek' ? "Έναρξη Παιχνιδιού" : "Start Game",
-    continue: language === 'Greek' ? "Συνεχίστε την ιστορία (τουλάχιστον 3 λέξεις):" : "Continue the story (min 3 words):",
-    submit: language === 'Greek' ? "Υποβολή" : "Submit",
-    quit: language === 'Greek' ? "Διακοπή Παιχνιδιού" : "Quit Game",
-    finalStory: language === 'Greek' ? "Η πλήρης ιστορία σας είναι:" : "Your full story is:",
-    lastWords: language === 'Greek' ? "Οι τελευταίες τρεις λέξεις ήταν:" : "The last three words were:",
-    round: language === 'Greek' ? "Γύρος" : "Round",
-    player: language === 'Greek' ? "Παίκτης" : "Player"
+  const t = language === 'Greek' ? {
+    instructions: 'Οδηγίες Παιχνιδιού',
+    howToPlay: '🎲 Πώς παίζεται: Παίξτε εναλλάξ γράφοντας την ιστορία. Ο πρώτος παίκτης ξεκινά με την αρχική πρόταση. Οι υπόλοιποι βλέπουν μόνο τις 3 τελευταίες λέξεις και συνεχίζουν με ό,τι τους κατέβει! Στόχος; Το χάος και το γέλιο! 😂',
+    chooseLang: 'Επιλογή γλώσσας',
+    chooseCategory: 'Επιλογή κατηγορίας',
+    start: 'Έναρξη',
+    newGame: 'Νέο Παιχνίδι',
+    save: 'Αποθήκευση',
+    next: 'Επόμενο'
+  } : {
+    instructions: 'Game Instructions',
+    howToPlay: '🎲 How to play: Take turns writing the story. Player 1 sees the full prompt. Next players only see the last 3 words. Go wild! The goal? Chaos and laughter! 😂',
+    chooseLang: 'Choose Language',
+    chooseCategory: 'Choose Category',
+    start: 'Start',
+    newGame: 'New Game',
+    save: 'Save',
+    next: 'Next'
+  };
+
+  const resetGame = () => {
+    setCurrentRound(1);
+    setCurrentPlayer(1);
+    setStory('');
+    setHistory([]);
+    setInput('');
+    setGameStarted(false);
+    setStartPrompt('');
   };
 
   const handleStart = () => {
-    const beginnings = language === 'Greek' ? beginningsGR : beginningsEN;
-    const start = beginnings[Math.floor(Math.random() * beginnings.length)];
-    setFullStory(start);
-    setLastWords(start.trim().split(' ').slice(-3));
-    setStarted(true);
-    setCurrentTurn(0);
+    const chosen = prompts[language][category];
+    const prompt = chosen[Math.floor(Math.random() * chosen.length)];
+    setStartPrompt(prompt);
+    setStory(prompt);
+    setGameStarted(true);
   };
 
-  const handleSubmit = () => {
-    const words = input.trim().split(' ');
-    if (words.length < 3) return;
-    const updated = fullStory + ' ' + input.trim();
-    setFullStory(updated);
-    setLastWords(words.slice(-3));
-    setCurrentTurn(prev => prev + 1);
-    setInput('');
-  };
-
-  const handleQuit = async () => {
-    const shouldShare = confirm(language === 'Greek'
-      ? 'Θέλετε να αποθηκεύσετε την ιστορία σας πριν την έξοδο;'
-      : 'Do you want to save your story before quitting?');
-
-    if (shouldShare) {
-      const path = FileSystem.documentDirectory + 'story.txt';
-      await FileSystem.writeAsStringAsync(path, fullStory);
-      await Sharing.shareAsync(path);
+  const handleNext = () => {
+    if (!input.trim()) {
+      Alert.alert(
+        language === 'Greek' ? 'Σφάλμα' : 'Error',
+        language === 'Greek' ? 'Γράψε κάτι πρώτα!' : 'Please write something first!'
+      );
+      return;
     }
 
-    setStarted(false);
+    const updated = story + ' ' + input;
+    setStory(updated.trim());
     setInput('');
-    setCurrentTurn(0);
-    setFullStory('');
-    setLastWords([]);
+    setHistory([...history, input]);
+    const totalTurns = rounds * players;
+    const currentTurn = (currentRound - 1) * players + currentPlayer;
+
+    if (currentTurn === totalTurns) {
+      Alert.alert(
+        language === 'Greek' ? 'Τέλος Παιχνιδιού' : 'Game Over',
+        language === 'Greek' ? 'Θέλεις να αποθηκεύσεις την ιστορία;' : 'Do you want to save the story?',
+        [
+          {
+            text: language === 'Greek' ? 'Όχι' : 'No',
+            onPress: () => resetGame(),
+            style: 'cancel'
+          },
+          {
+            text: language === 'Greek' ? 'Ναι' : 'Yes',
+            onPress: () => {
+              saveStory(updated);
+              resetGame();
+            }
+          }
+        ]
+      );
+      return;
+    }
+
+    if (currentPlayer < players) {
+      setCurrentPlayer(currentPlayer + 1);
+    } else {
+      setCurrentPlayer(1);
+      setCurrentRound(currentRound + 1);
+    }
   };
 
-  const currentPlayer = (currentTurn % players) + 1;
+  const saveStory = async (text) => {
+    const fileUri = FileSystem.documentDirectory + 'story.txt';
+    await FileSystem.writeAsStringAsync(fileUri, text);
+    await Sharing.shareAsync(fileUri);
+  };
+
+  const lastThreeWords = story.trim().split(' ').slice(-3).join(' ');
 
   return (
-    <ScrollView style={styles.container}>
-      {!started ? (
-        <Animated.View entering={FadeIn} style={styles.card}>
-          <Image source={{ uri: 'https://cdn-icons-png.flaticon.com/512/29/29302.png' }} style={styles.logo} />
-          <Text style={styles.title}>{t.welcome}</Text>
-          <Text>{t.selectLanguage}</Text>
-          <View style={styles.row}>
-            <Pressable
-              style={[styles.optionButton, language === 'English' && styles.selectedButton]}
-              onPress={() => setLanguage('English')}>
-              <Text style={styles.optionText}>English</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.optionButton, language === 'Greek' && styles.selectedButton]}
-              onPress={() => setLanguage('Greek')}>
-              <Text style={styles.optionText}>Ελληνικά</Text>
-            </Pressable>
-          </View>
+    <ImageBackground source={backgrounds[category]} style={styles.background}>
+      <ScrollView contentContainerStyle={styles.container}>
+        {!gameStarted ? (
+          <>
+            <Image
+              source={require('./assets/icon.png')}
+              style={{ width: 150, height: 150, alignSelf: 'center', marginBottom: 20 }}
+            />
+            <TouchableOpacity onPress={() => setShowInstructions(!showInstructions)}>
+              <Text style={styles.instructions}>{t.instructions}</Text>
+            </TouchableOpacity>
+            {showInstructions && <Text style={styles.paragraph}>{t.howToPlay}</Text>}
 
-          <Text>{t.selectTurns}</Text>
-          <View style={styles.row}>
-            {[10, 20, 30].map(n => (
-              <Pressable
-                key={n}
-                style={[styles.optionButton, turns === n && styles.selectedButton]}
-                onPress={() => setTurns(n)}>
-                <Text style={styles.optionText}>{n}</Text>
-              </Pressable>
-            ))}
-          </View>
+            <Text style={styles.label}>{t.chooseLang}</Text>
+            <View style={styles.row}>
+              <TouchableOpacity onPress={() => setLanguage('English')} style={[styles.button, language === 'English' && styles.selected]}><Text>EN</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => setLanguage('Greek')} style={[styles.button, language === 'Greek' && styles.selected]}><Text>GR</Text></TouchableOpacity>
+            </View>
 
-          <Text>{t.selectPlayers}</Text>
-          <View style={styles.row}>
-            {[2, 3, 4].map(p => (
-              <Pressable
-                key={p}
-                style={[styles.optionButton, players === p && styles.selectedButton]}
-                onPress={() => setPlayers(p)}>
-                <Text style={styles.optionText}>{p}</Text>
-              </Pressable>
-            ))}
-          </View>
+            <Text style={styles.label}>{t.chooseCategory}</Text>
+            <View style={styles.row}>
+              {Object.keys(prompts[language]).map(cat => (
+                <TouchableOpacity key={cat} onPress={() => setCategory(cat)} style={[styles.button, category === cat && styles.selected]}>
+                  <Text>{cat}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
-          <Pressable
-            style={[styles.mainButton, !turns && styles.disabledButton]}
-            onPress={handleStart}
-            disabled={!turns}
-          >
-            <Text style={styles.buttonText}>{t.startGame}</Text>
-          </Pressable>
-
-          <Pressable onPress={() => setShowInstructions(!showInstructions)}>
-            <Text style={styles.instructionsToggle}>{t.instructionsBtn}</Text>
-          </Pressable>
-
-          {showInstructions && <Text style={styles.instructions}>{t.instructions}</Text>}
-        </Animated.View>
-      ) : currentTurn < turns ? (
-        <View style={styles.card}>
-          <Text style={styles.title}>{`${t.round} ${currentTurn + 1} / ${turns} — ${t.player} ${currentPlayer}`}</Text>
-          <Text style={styles.instructions}>{t.lastWords} {lastWords.join(' ')}</Text>
-          <Text style={styles.instructions}>{t.continue}</Text>
-          <TextInput
-            value={input}
-            onChangeText={setInput}
-            multiline
-            placeholder="..."
-            style={styles.input}
-          />
-          <View style={styles.row}>
-            <Pressable style={styles.mainButton} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>{t.submit}</Text>
-            </Pressable>
-            <Pressable style={styles.optionButton} onPress={handleQuit}>
-              <Text>{t.quit}</Text>
-            </Pressable>
-          </View>
-        </View>
-      ) : (
-        <View style={styles.card}>
-          <Text style={styles.title}>{t.finalStory}</Text>
-          <Text style={styles.instructions}>{fullStory}</Text>
-          <Pressable style={styles.mainButton} onPress={async () => {
-            const path = FileSystem.documentDirectory + 'story.txt';
-            await FileSystem.writeAsStringAsync(path, fullStory);
-            await Sharing.shareAsync(path);
-          }}>
-            <Text style={styles.buttonText}>{language === 'Greek' ? 'Αποθήκευση Ιστορίας' : 'Save Story'}</Text>
-          </Pressable>
-          <Pressable style={styles.optionButton} onPress={handleQuit}>
-            <Text>{t.quit}</Text>
-          </Pressable>
-        </View>
-      )}
-      <Text style={{ textAlign: 'right', fontSize: 12, opacity: 0.6, marginTop: 10 }}>GZapps</Text>
-    </ScrollView>
+            <TouchableOpacity style={styles.startButton} onPress={handleStart}>
+              <Text style={styles.buttonText}>{t.start}</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <Text style={styles.label}>{language === 'Greek' ? 'Γύρος' : 'Round'} {currentRound} / {rounds}</Text>
+            <Text style={styles.label}>{language === 'Greek' ? 'Παίκτης' : 'Player'} {currentPlayer} / {players}</Text>
+            <Text style={styles.prompt}>{currentRound === 1 && currentPlayer === 1 ? startPrompt : lastThreeWords}</Text>
+            <TextInput
+              value={input}
+              onChangeText={setInput}
+              placeholder={language === 'Greek' ? 'Η συνέχεια...' : 'Continue the story...'}
+              style={styles.input}
+            />
+            <TouchableOpacity onPress={handleNext} style={styles.startButton}>
+              <Text style={styles.buttonText}>{t.next}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={resetGame} style={styles.newGameButton}>
+              <Text style={styles.buttonText}>{t.newGame}</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    marginTop: Platform.OS === 'android' ? 30 : 60,
-    backgroundColor: '#fef9f4',
-  },
-  card: {
-    backgroundColor: '#fff8e1',
-    borderRadius: 20,
-    padding: 20,
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 10
-  },
-  optionButton: {
-    backgroundColor: '#ddd',
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 20,
-    marginHorizontal: 5
-  },
-  selectedButton: {
-    backgroundColor: '#ff9800',
-    transform: [{ scale: 1.08 }],
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
-    elevation: 5
-  },
-  optionText: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500'
-  },
-  mainButton: {
-    backgroundColor: '#ff9800',
-    padding: 15,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginVertical: 20
-  },
-  disabledButton: {
-    backgroundColor: '#ccc'
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  instructions: {
-    marginTop: 10,
-    fontStyle: 'italic',
-    fontSize: 14,
-    lineHeight: 20
-  },
-  instructionsToggle: {
-    textAlign: 'center',
-    marginTop: 10,
-    textDecorationLine: 'underline',
-    color: '#3e2723'
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#4e342e'
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-    marginBottom: 10
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#aaa',
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 10,
-    backgroundColor: '#fff'
-  }
+  background: { flex: 1, resizeMode: 'cover' },
+  container: { flexGrow: 1, padding: 20, justifyContent: 'center' },
+  instructions: { fontWeight: 'bold', fontSize: 18, marginBottom: 10 },
+  paragraph: { fontSize: 16, marginBottom: 20 },
+  label: { fontSize: 16, marginTop: 20 },
+  row: { flexDirection: 'row', flexWrap: 'wrap' },
+  button: { padding: 10, margin: 5, backgroundColor: '#ccc', borderRadius: 5 },
+  selected: { backgroundColor: '#4caf50' },
+  startButton: { backgroundColor: '#2196f3', padding: 15, marginTop: 20, borderRadius: 5 },
+  newGameButton: { backgroundColor: '#f44336', padding: 15, marginTop: 10, borderRadius: 5 },
+  buttonText: { color: 'white', textAlign: 'center' },
+  prompt: { fontSize: 18, fontStyle: 'italic', marginVertical: 15 },
+  input: { borderColor: 'gray', borderWidth: 1, padding: 10, backgroundColor: 'white' }
 });

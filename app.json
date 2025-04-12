@@ -1,0 +1,25 @@
+
+{
+  "expo": {
+    "name": "Your Story",
+    "slug": "your-story",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/app_icon_clean.png",
+    "splash": {
+      "image": "./assets/images/menu_logo_clean.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#2c185b"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icons/app_icon_clean.png",
+        "backgroundColor": "#2c185b"
+      }
+    }
+  }
+}

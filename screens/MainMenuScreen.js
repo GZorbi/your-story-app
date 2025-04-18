@@ -8,7 +8,7 @@ export default function MainMenuScreen() {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/menu_logo_clean.png')} style={styles.logo} resizeMode="contain" />
+      <Image source={require('../assets/images/menu_logo_clean.png')} style={styles.logo} resizeMode="contain" />
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Game')}> {/* Quick Game */}
         <Text style={styles.buttonText}>Quick Game</Text>

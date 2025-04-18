@@ -5,8 +5,11 @@
   "build": {
     "preview": {
       "developmentClient": false,
-      "distribution": "internal",
-      "image": "ubuntu-22.04"
+      "distribution": "internal"
+    },
+    "production": {
+      "developmentClient": false,
+      "distribution": "store"
     }
   }
 }

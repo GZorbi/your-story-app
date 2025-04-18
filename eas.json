@@ -6,16 +6,12 @@
     "preview": {
       "developmentClient": false,
       "distribution": "internal",
-      "env": {
-        "JAVA_HOME": "/opt/buildtools/java/17"
-      }
+      "image": "latest"
     },
     "production": {
       "developmentClient": false,
       "distribution": "store",
-      "env": {
-        "JAVA_HOME": "/opt/buildtools/java/17"
-      }
+      "image": "latest"
     }
   }
 }

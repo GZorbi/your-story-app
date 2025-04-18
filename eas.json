@@ -1,7 +1,15 @@
 {
+  "cli": {
+    "version": ">= 3.0.0"
+  },
   "build": {
-    "android": {
-      "workflow": "managed"
+    "preview": {
+      "developmentClient": false,
+      "distribution": "internal"
+    },
+    "production": {
+      "developmentClient": false,
+      "distribution": "store"
     }
   }
 }

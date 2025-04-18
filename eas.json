@@ -11,8 +11,5 @@
       "developmentClient": false,
       "distribution": "store"
     }
-  },
-  "env": {
-    "EXPO_NO_INSTALL": "1"
   }
 }

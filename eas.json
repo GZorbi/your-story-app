@@ -5,13 +5,11 @@
   "build": {
     "preview": {
       "developmentClient": false,
-      "distribution": "internal",
-      "image": "latest"
+      "distribution": "internal"
     },
     "production": {
       "developmentClient": false,
-      "distribution": "store",
-      "image": "latest"
+      "distribution": "store"
     }
   }
 }

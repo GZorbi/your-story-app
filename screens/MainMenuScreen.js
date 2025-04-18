@@ -1,26 +1,33 @@
 
 import React from 'react';
-import { View, Text, StyleSheet, Image, Button } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const MainMenuScreen = () => {
+export default function MainMenuScreen() {
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../assets/images/menu_logo_clean.png')}
-        style={styles.logo}
-      />
-      <Text style={styles.title}>Main Menu</Text>
-      <View style={styles.buttonContainer}>
-        <Button title="Start Game" onPress={() => navigation.navigate('Options')} />
-        <Button title="How to Play" onPress={() => navigation.navigate('Instructions')} />
-        <Button title="View Story History" onPress={() => navigation.navigate('History')} />
-      </View>
+      <Image source={require('../assets/menu_logo_clean.png')} style={styles.logo} resizeMode="contain" />
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Game')}> {/* Quick Game */}
+        <Text style={styles.buttonText}>Quick Game</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Options')}> {/* Full Game Options */}
+        <Text style={styles.buttonText}>Start New Game</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('History')}> {/* View Story History */}
+        <Text style={styles.buttonText}>View Story History</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Language')}> {/* Language Selection */}
+        <Text style={styles.buttonText}>Language / Γλώσσα</Text>
+      </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -28,23 +35,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
   },
   logo: {
-    width: 240,
-    height: 120,
-    resizeMode: 'contain',
-    marginBottom: 20,
+    width: 220,
+    height: 150,
+    marginBottom: 40,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    gap: 10,
+  button: {
+    backgroundColor: '#593d63', // Απόχρωση από το λογότυπο και μενού ρυθμίσεων
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    borderRadius: 12,
     marginVertical: 10,
     width: '100%',
+    alignItems: 'center',
+    elevation: 2,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

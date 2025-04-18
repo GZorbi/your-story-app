@@ -1,25 +1,37 @@
-
 {
   "expo": {
     "name": "Your Story",
-    "slug": "your-story",
+    "slug": "your-story-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icons/app_icon_clean.png",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/menu_logo_clean.png",
       "resizeMode": "contain",
-      "backgroundColor": "#2c185b"
+      "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/app_icon_clean.png",
-        "backgroundColor": "#2c185b"
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.yourstory.app"
+    },
+    "web": {
+      "favicon": "./assets/icons/app_icon_clean.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9dc8e031-fa1a-4a7c-bd08-3ea2374d5ba3"
       }
-    }
+    },
+    "owner": "gzorbi"
   }
 }
